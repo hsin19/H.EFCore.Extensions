@@ -29,8 +29,12 @@ public class BloggingTestBase : IDisposable
         var a = context.Database.EnsureCreated();
 
         context.AddRange(
-            new Blog { Name = "Blog1", Url = "http://blog1.com" },
-            new Blog { Name = "Blog2", Url = "http://blog2.com" });
+            new Blog { BlogId = 1, Name = "Blog1", Url = "http://blog1.com" },
+            new Blog { BlogId = 2, Name = "Blog2", Url = "http://blog2.com" }
+            );
+        context.AddRange(
+            new Post { BlogId = 1, PostId = 1 },
+            new Post { BlogId = 1, PostId = 2 });
         context.SaveChanges();
     }
 

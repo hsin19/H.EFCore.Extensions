@@ -27,8 +27,13 @@ public class BloggingContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Post>().HasNoKey()
-            .ToView("AllResources");
+        modelBuilder.Entity<Blog>()
+            .HasKey(b => b.BlogId);
+
+        modelBuilder.Entity<Post>()
+            .HasAlternateKey(b => new { b.PostId, b.BlogId });
+
+        modelBuilder.Entity<Post>().Property(e => e.UpdateTime).HasDefaultValue(DateTime.Now);
 
         if (_modelCustomizer is not null)
         {
