@@ -14,7 +14,6 @@ public class IQueryableInvokeReplacerExtensions_Test : BloggingTestBase
     {
         using var context = CreateContext();
         var a = context.Blogs.ToList();
-        var asda = context.Blogs.ToQueryString();
         Assert.Collection(
             a,
             b => Assert.Equal("Blog1", b.Name),
@@ -22,7 +21,7 @@ public class IQueryableInvokeReplacerExtensions_Test : BloggingTestBase
     }
 
     [Fact]
-    public void DbcontextQuerySigle()
+    public void Dbcontext_Query()
     {
         var post = new Post { BlogId = 1, PostId = 2 };
         using var context = CreateContext();
@@ -32,7 +31,7 @@ public class IQueryableInvokeReplacerExtensions_Test : BloggingTestBase
     }
 
     [Fact]
-    public void DbcontextQueryMu()
+    public void Dbcontext_QueryMultiple_SigleKey()
     {
         Post[] posts = {
             new Post { BlogId = 1, PostId = 2 },
@@ -40,6 +39,18 @@ public class IQueryableInvokeReplacerExtensions_Test : BloggingTestBase
         };
 
         using var context = CreateContext();
-        var a = context.Query<Post>(posts).ToQueryString();
+        var a = context.Query<Post>(posts).ToList();
+    }
+
+    [Fact]
+    public void Dbcontext_QueryMultiple_MultipleKey()
+    {
+        Comment[] comments = {
+            new Comment { PostId = 1,index = 1 },
+            new Comment { PostId = 1,index = 2 },
+        };
+
+        using var context = CreateContext();
+        var a = context.Query<Comment>(comments).ToList();
     }
 }

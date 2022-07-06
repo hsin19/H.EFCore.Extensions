@@ -19,7 +19,9 @@ public class BloggingContext : DbContext
 
 
     public DbSet<Blog> Blogs => Set<Blog>();
-    public DbSet<Post> UrlResources => Set<Post>();
+    public DbSet<Post> Posts => Set<Post>();
+    public DbSet<Comment> Comments => Set<Comment>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -27,13 +29,12 @@ public class BloggingContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Blog>()
-            .HasKey(b => b.BlogId);
+
+        modelBuilder.Entity<Comment>()
+            .HasKey(c => new { c.PostId, c.index });
 
         modelBuilder.Entity<Post>()
-            .HasAlternateKey(b => new { b.PostId, b.BlogId });
-
-        modelBuilder.Entity<Post>().Property(e => e.UpdateTime).HasDefaultValue(DateTime.Now);
+            .Property(e => e.UpdateTime).HasDefaultValue(DateTime.Now);
 
         if (_modelCustomizer is not null)
         {
