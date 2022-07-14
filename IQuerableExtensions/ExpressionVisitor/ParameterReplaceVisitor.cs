@@ -2,7 +2,7 @@
 
 using System.Linq.Expressions;
 
-namespace IQueryableInvokeReplacer;
+namespace IQuerableExtensions;
 
 internal class ParameterReplaceVisitor : ExpressionVisitor
 {

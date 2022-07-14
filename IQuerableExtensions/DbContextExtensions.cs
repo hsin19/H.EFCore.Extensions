@@ -25,7 +25,9 @@ public static class DbContextExtensions
 
     public static IQueryable<T> Query<T>(this DbContext context, IEnumerable<T> obj)
         where T : class
-        => context.QueryMultiple(obj);
+    {
+        return context.QueryMultiple(obj);
+    }
 
     public static IQueryable<T> QueryMultiple<T>(this DbContext context, IEnumerable<T> objs)
         where T : class

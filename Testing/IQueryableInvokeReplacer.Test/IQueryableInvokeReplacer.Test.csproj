@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\IQuerableExtensions\IQuerableExtensions.csproj" />
-    <ProjectReference Include="..\..\IQueryableInvokeReplacer\IQueryableInvokeReplacer.csproj" />
     <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj" />
   </ItemGroup>
 

@@ -3,15 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IQueryableInvokeReplacer", "IQueryableInvokeReplacer\IQueryableInvokeReplacer.csproj", "{AE4AD752-EECB-4CE0-8155-06FB4296AB9A}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{07C7D9F8-1F4A-4DDB-9E48-D1CE9DA0B677}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IQueryableInvokeReplacer.Test", "Testing\IQueryableInvokeReplacer.Test\IQueryableInvokeReplacer.Test.csproj", "{4FB7AB5D-CDA7-457A-BDB7-8ADD8038265D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic", "Testing\BusinessLogic\BusinessLogic.csproj", "{A9CD78D1-E34A-4622-BF46-27E6CF2417C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQuerableExtensions", "IQuerableExtensions\IQuerableExtensions.csproj", "{2D80E91D-37E4-429C-8AC5-628954058B76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IQuerableExtensions", "IQuerableExtensions\IQuerableExtensions.csproj", "{2D80E91D-37E4-429C-8AC5-628954058B76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AE4AD752-EECB-4CE0-8155-06FB4296AB9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AE4AD752-EECB-4CE0-8155-06FB4296AB9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AE4AD752-EECB-4CE0-8155-06FB4296AB9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AE4AD752-EECB-4CE0-8155-06FB4296AB9A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4FB7AB5D-CDA7-457A-BDB7-8ADD8038265D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4FB7AB5D-CDA7-457A-BDB7-8ADD8038265D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FB7AB5D-CDA7-457A-BDB7-8ADD8038265D}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace IQuerableExtensions;
 
-public static class ExpressionExtensions
+public static partial class ExpressionExtensions
 {
 
     /// <summary>
@@ -40,5 +40,28 @@ public static class ExpressionExtensions
         else if (right != null)
             return Expression.OrElse(left, right);
         else return null;
+    }
+
+    public static Expression ReplaceParameter(this Expression expression, ParameterExpression from, Expression to)
+    {
+        if (!to.Type.IsAssignableTo(from.Type))
+            throw new ArgumentException($"{to.Type} cannot be assigned to {from.Type.Name}", nameof(to));
+        return ReplaceParameters(expression, new() { [from] = to });
+    }
+
+    public static Expression ReplaceParameters(this Expression expression, IEnumerable<ParameterExpression> from, IEnumerable<Expression> to)
+    {
+        var zip = from.Zip(to);
+        if (zip.Any(e => !e.Second.Type.IsAssignableTo(e.First.Type)))
+        {
+            throw new ArgumentException($"Some of {nameof(to)} cannot be assigned.", nameof(to));
+        }
+        var dic = zip.ToDictionary(x => x.First, x => x.Second);
+        return ReplaceParameters(expression, dic);
+    }
+
+    public static Expression ReplaceParameters(this Expression expression, Dictionary<ParameterExpression, Expression> pairs)
+    {
+        return new ParameterReplaceVisitor(pairs).Visit(expression);
     }
 }

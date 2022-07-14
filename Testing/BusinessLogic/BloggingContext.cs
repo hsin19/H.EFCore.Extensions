@@ -31,7 +31,7 @@ public class BloggingContext : DbContext
     {
 
         modelBuilder.Entity<Comment>()
-            .HasKey(c => new { c.PostId, c.index });
+            .HasKey(c => new { c.PostId, c.Index });
 
         modelBuilder.Entity<Post>()
             .Property(e => e.UpdateTime).HasDefaultValue(DateTime.Now);
