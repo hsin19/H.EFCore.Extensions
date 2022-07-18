@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{07C7D9F8-1F4A-4DDB-9E48-D1CE9DA0B677}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IQueryableInvokeReplacer.Test", "Testing\IQueryableInvokeReplacer.Test\IQueryableInvokeReplacer.Test.csproj", "{4FB7AB5D-CDA7-457A-BDB7-8ADD8038265D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IQuerableExtensions.Test", "Testing\IQuerableExtensions.Test\IQuerableExtensions.Test.csproj", "{4FB7AB5D-CDA7-457A-BDB7-8ADD8038265D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic", "Testing\BusinessLogic\BusinessLogic.csproj", "{A9CD78D1-E34A-4622-BF46-27E6CF2417C8}"
 EndProject

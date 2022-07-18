@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Data.Common;
-using System.Linq;
 
 
 namespace IQueryableInvokeReplacer.Test;
@@ -12,7 +11,10 @@ public class BloggingTestBase : IDisposable
     private readonly DbConnection _connection;
     private readonly DbContextOptions<BloggingContext> _contextOptions;
 
-    protected BloggingContext CreateContext() => new(_contextOptions);
+    protected BloggingContext CreateContext()
+    {
+        return new(_contextOptions);
+    }
 
     public BloggingTestBase()
     {
@@ -26,7 +28,7 @@ public class BloggingTestBase : IDisposable
         // Create the schema and seed some data
         using var context = new BloggingContext(_contextOptions);
 
-        var a = context.Database.EnsureCreated();
+        bool a = context.Database.EnsureCreated();
 
         context.AddRange(
             new Blog { BlogId = 1, Name = "Blog1", Url = "http://blog1.com" },
@@ -38,5 +40,8 @@ public class BloggingTestBase : IDisposable
         context.SaveChanges();
     }
 
-    public void Dispose() => _connection.Dispose();
+    public void Dispose()
+    {
+        _connection.Dispose();
+    }
 }

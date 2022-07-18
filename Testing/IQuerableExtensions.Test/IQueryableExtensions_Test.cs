@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace IQueryableInvokeReplacer.Test;
 
-public class IQueryableInvokeReplacerExtensions_Test : BloggingTestBase
+public class IQueryableExtensions_Test : BloggingTestBase
 {
     [Fact]
     public void GetAllBlogs()
