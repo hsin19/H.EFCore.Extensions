@@ -22,8 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\IQuerableExtensions\IQuerableExtensions.csproj" />
-    <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj" />
+    <ProjectReference Include="..\H.EFCore.Extensions\H.EFCore.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

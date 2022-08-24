@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-
-namespace IQueryableInvokeReplacer.Testing.BusinessLogic;
+﻿namespace H.EFCore.Extensions.Test.TestModel;
 
 public class BloggingContext : DbContext
 {
@@ -37,8 +34,6 @@ public class BloggingContext : DbContext
             .Property(e => e.UpdateTime).HasDefaultValue(DateTime.Now);
 
         if (_modelCustomizer is not null)
-        {
             _modelCustomizer(this, modelBuilder);
-        }
     }
 }

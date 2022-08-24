@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace IQueryableInvokeReplacer.Testing.BusinessLogic;
+namespace H.EFCore.Extensions.Test.TestModel;
 
 #region IBloggingRepository
 public interface IBloggingRepository

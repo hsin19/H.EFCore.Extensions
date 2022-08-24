@@ -2,7 +2,7 @@
 
 using System.Linq.Expressions;
 
-namespace IQuerableExtensions;
+namespace H.EFCore.Extensions.Tools;
 
 internal class ParameterReplaceVisitor : ExpressionVisitor
 {
@@ -10,6 +10,10 @@ internal class ParameterReplaceVisitor : ExpressionVisitor
 
     internal ParameterReplaceVisitor(Dictionary<ParameterExpression, Expression> pairs)
     {
+        if (pairs.Any(e => !e.Value.Type.IsAssignableTo(e.Key.Type)))
+        {
+            throw new ArgumentException($"Some of {nameof(pairs)} cannot be assigned.", nameof(pairs));
+        }
         _pairs = pairs;
     }
 

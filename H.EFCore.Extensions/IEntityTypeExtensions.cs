@@ -1,11 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
 
-namespace IQuerableExtensions;
+namespace H.EFCore.Extensions;
 
+/// <summary>
+/// Extension Method for <see cref="IEntityType"/>
+/// </summary>
 public static class IEntityTypeExtensions
 {
-    private static readonly Dictionary<IEntityType, List<PropertyInfo>> CacheKey = new();
+    private static readonly Dictionary<IEntityType, List<PropertyInfo>> s_cacheKey = new();
 
     /// <summary>
     /// Get the <see cref="PropertyInfo"/>s of <see cref="IEntityType"/> which can identify uniqueness
@@ -20,14 +23,14 @@ public static class IEntityTypeExtensions
     /// </remarks>
     public static List<PropertyInfo> GetUniquePropertyInfo(this IEntityType entityType)
     {
-        if (!CacheKey.TryGetValue(entityType, out var properties))
+        if (!s_cacheKey.TryGetValue(entityType, out var properties))
         {
             var keys = entityType.GetKeys();
             var key = keys.FirstOrDefault(k => k.IsPrimaryKey());
             key ??= keys.MinBy(e => e.Properties.Count);
             properties = key?.Properties.Select(k => k.PropertyInfo).OfType<PropertyInfo>().ToList();
             properties ??= entityType.GetProperties().Select(p => p.PropertyInfo).OfType<PropertyInfo>().ToList();
-            CacheKey[entityType] = properties;
+            s_cacheKey[entityType] = properties;
         }
         return properties;
     }

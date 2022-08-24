@@ -1,10 +1,10 @@
-namespace IQueryableInvokeReplacer.Testing.BusinessLogic;
+namespace H.EFCore.Extensions.Test.TestModel;
 
 public class Post
 {
     public int PostId { get; set; }
     public int BlogId { get; set; }
-    public string? Title { get; set; } 
+    public string? Title { get; set; }
     public string? Content { get; set; }
     public DateTime UpdateTime { get; set; }
 }

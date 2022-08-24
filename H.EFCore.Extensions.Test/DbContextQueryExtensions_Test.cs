@@ -1,22 +1,7 @@
-﻿using IQuerableExtensions;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
+﻿namespace H.EFCore.Extensions.Test;
 
-namespace IQueryableInvokeReplacer.Test;
-
-public class IQueryableExtensions_Test : BloggingTestBase
+public class DbContextQueryExtensions_Test : BloggingTestBase
 {
-    [Fact]
-    public void GetAllBlogs()
-    {
-        using var context = CreateContext();
-        var a = context.Blogs.ToList();
-        Assert.Collection(
-            a,
-            b => Assert.Equal("Blog1", b.Name),
-            b => Assert.Equal("Blog2", b.Name));
-    }
-
     [Fact]
     public void Dbcontext_Query()
     {
@@ -58,8 +43,8 @@ public class IQueryableExtensions_Test : BloggingTestBase
         var a = context.Set<Post>()
             .Select(e => e.Title)
             .ToQueryString();
-        var b = context.Set<Post>()
-            .Select(e => e.Title, e => e)
+        var b = context.Set<Comment>()
+            .Select(u => u.UserId, e => e.User)
             .ToQueryString();
     }
 }

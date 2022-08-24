@@ -3,13 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{07C7D9F8-1F4A-4DDB-9E48-D1CE9DA0B677}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "H.EFCore.Extensions.Test", "H.EFCore.Extensions.Test\H.EFCore.Extensions.Test.csproj", "{4FB7AB5D-CDA7-457A-BDB7-8ADD8038265D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IQuerableExtensions.Test", "Testing\IQuerableExtensions.Test\IQuerableExtensions.Test.csproj", "{4FB7AB5D-CDA7-457A-BDB7-8ADD8038265D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic", "Testing\BusinessLogic\BusinessLogic.csproj", "{A9CD78D1-E34A-4622-BF46-27E6CF2417C8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IQuerableExtensions", "IQuerableExtensions\IQuerableExtensions.csproj", "{2D80E91D-37E4-429C-8AC5-628954058B76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "H.EFCore.Extensions", "H.EFCore.Extensions\H.EFCore.Extensions.csproj", "{2D80E91D-37E4-429C-8AC5-628954058B76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +17,6 @@ Global
 		{4FB7AB5D-CDA7-457A-BDB7-8ADD8038265D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FB7AB5D-CDA7-457A-BDB7-8ADD8038265D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FB7AB5D-CDA7-457A-BDB7-8ADD8038265D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A9CD78D1-E34A-4622-BF46-27E6CF2417C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A9CD78D1-E34A-4622-BF46-27E6CF2417C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A9CD78D1-E34A-4622-BF46-27E6CF2417C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A9CD78D1-E34A-4622-BF46-27E6CF2417C8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2D80E91D-37E4-429C-8AC5-628954058B76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2D80E91D-37E4-429C-8AC5-628954058B76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D80E91D-37E4-429C-8AC5-628954058B76}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -32,10 +24,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{4FB7AB5D-CDA7-457A-BDB7-8ADD8038265D} = {07C7D9F8-1F4A-4DDB-9E48-D1CE9DA0B677}
-		{A9CD78D1-E34A-4622-BF46-27E6CF2417C8} = {07C7D9F8-1F4A-4DDB-9E48-D1CE9DA0B677}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2A7D3739-C130-433E-A291-2BB7F3E99531}

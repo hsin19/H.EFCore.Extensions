@@ -1,4 +1,4 @@
-﻿namespace IQueryableInvokeReplacer.Testing.BusinessLogic;
+﻿namespace H.EFCore.Extensions.Test.TestModel;
 
 public class User
 {
