@@ -29,45 +29,36 @@ public static class ExpressionExtensions
         return condition;
     }
 
+    public static MemberExpression? GetComplexProperty(this Expression expression, string name)
+    {
+        var properties = expression.Type.GetComplexProperty(name);
+        if (properties == null)
+        {
+            return null;
+        }
+        MemberExpression? ret = null;
+        foreach (var property in properties)
+        {
+            ret = Expression.Property(ret ?? expression, property);
+        }
+        return ret;
+    }
+
+    #region default method extension
+
     /// <remarks>If either <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>, return <c><paramref name="left"/> ?? <paramref name="right"/></c></remarks>
     /// <inheritdoc cref="Expression.AndAlso(Expression, Expression)"/>
     public static Expression? AndAlso(this Expression? left, Expression? right)
     {
-        if (left is null || right is null)
-            return left ?? right;
-        else
-            return Expression.AndAlso(left, right);
+        return left is null || right is null ? left ?? right : Expression.AndAlso(left, right);
     }
 
     /// <remarks>If either <paramref name="left"/> or <paramref name="right"/> is <see langword="null"/>, return <c><paramref name="left"/> ?? <paramref name="right"/></c></remarks>
     /// <inheritdoc cref="Expression.OrElse(Expression, Expression)"/>
     public static Expression? OrElse(this Expression? left, Expression? right)
     {
-        if (left is null || right is null)
-            return left ?? right;
-        else
-            return Expression.OrElse(left, right);
+        return left is null || right is null ? left ?? right : Expression.OrElse(left, right);
     }
 
-    /// <inheritdoc cref="ReplaceParameters(Expression, Dictionary{ParameterExpression, Expression})"/>
-    public static Expression ReplaceParameter(this Expression expression, ParameterExpression from, Expression to)
-    {
-        return expression.ReplaceParameters(new() { [from] = to });
-    }
-
-    /// <inheritdoc cref="ReplaceParameters(Expression, Dictionary{ParameterExpression, Expression})"/>
-    public static Expression ReplaceParameters(this Expression expression, IEnumerable<ParameterExpression> from, IEnumerable<Expression> to)
-    {
-        var dic = from.Zip(to).ToDictionary(x => x.First, x => x.Second);
-        return expression.ReplaceParameters(dic);
-    }
-
-    /// <summary>
-    /// Replace the specified <see cref="ParameterExpression" /> to <see cref="Expression" />
-    /// </summary>
-    /// <returns></returns>
-    public static Expression ReplaceParameters(this Expression expression, Dictionary<ParameterExpression, Expression> pairs)
-    {
-        return new ParameterReplaceVisitor(pairs).Visit(expression);
-    }
+    #endregion
 }
