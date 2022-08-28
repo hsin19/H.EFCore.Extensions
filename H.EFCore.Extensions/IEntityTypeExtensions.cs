@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
-using System.Reflection;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace H.EFCore.Extensions;
 
@@ -28,8 +28,13 @@ public static class IEntityTypeExtensions
             var keys = entityType.GetKeys();
             var key = keys.FirstOrDefault(k => k.IsPrimaryKey());
             key ??= keys.MinBy(e => e.Properties.Count);
-            properties = key?.Properties.Select(k => k.PropertyInfo).OfType<PropertyInfo>().ToList();
-            properties ??= entityType.GetProperties().Select(p => p.PropertyInfo).OfType<PropertyInfo>().ToList();
+            properties = key?.Properties
+                .Select(k => k.PropertyInfo)
+                .OfType<PropertyInfo>()
+                .ToList();
+            properties ??= entityType.GetProperties()
+                .Select(p => p.PropertyInfo).OfType<PropertyInfo>()
+                .ToList();
             s_cacheKey[entityType] = properties;
         }
         return properties;
