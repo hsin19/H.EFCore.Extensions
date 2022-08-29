@@ -29,6 +29,10 @@ public static class ExpressionExtensions
         return condition;
     }
 
+    /// <summary>
+    /// Creates a <see cref="MemberExpression"/> by the complex property name.
+    /// </summary>
+    /// <inheritdoc cref="Expression.Property(Expression, string)"/>
     public static MemberExpression? GetComplexProperty(this Expression expression, string name)
     {
         var properties = expression.Type.GetComplexProperty(name);
@@ -58,6 +62,29 @@ public static class ExpressionExtensions
     public static Expression? OrElse(this Expression? left, Expression? right)
     {
         return left is null || right is null ? left ?? right : Expression.OrElse(left, right);
+    }
+
+
+    /// <summary>
+    /// Use or( <see langword="||"/> ) connect all conditions
+    /// </summary>
+    /// <inheritdoc cref="Expression.OrElse(Expression, Expression)"/>
+    public static Expression OrElse(params Expression[] conditions)
+    {
+        switch (conditions.Length)
+        {
+            case 0:
+                throw new ArgumentException("Array cannot be empty.", nameof(conditions));
+            case 1:
+                return conditions[0];
+            case 2:
+                return Expression.OrElse(conditions[0], conditions[1]);
+            default:
+            {
+                var spiltIndex = conditions.Length / 2;
+                return Expression.OrElse(OrElse(conditions[..spiltIndex]), OrElse(conditions[spiltIndex..]));
+            }
+        }
     }
 
     #endregion

@@ -112,11 +112,11 @@ public static class DbContextQueryExtensions
     {
         // t => (t.[key1] == [key1] && t.[key2] == [key2]) || (t.[key1] == [key1] && t.[key2] == [key2])
         var parameter = Expression.Parameter(typeof(T));
-        Expression? body = null;
-        foreach (var obj in objs)
-        {
-            body = body.OrElse(parameter.GetEqualCondition(obj, keys));
-        }
+        var condutions = objs
+            .Select(o => parameter.GetEqualCondition(o, keys))
+            .OfType<Expression>()
+            .ToList();
+        var body = ExpressionExtensions.OrElse(condutions.ToArray());
         return Expression.Lambda<Func<T, bool>>(body!, parameter);
     }
 }
