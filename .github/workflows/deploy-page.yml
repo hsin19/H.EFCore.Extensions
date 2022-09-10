@@ -22,6 +22,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Checkout wiki
+        uses: actions/checkout@v3
+        with:
+          repository: ${{github.repository}}.wiki    # specify the wiki repo name here.
+          path: H.EFCore.Extensions.Doc/articles/
+          
       - name: Setup Pages
         uses: actions/configure-pages@v2
 
@@ -29,23 +35,13 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.0.x
-
+        
+        # H.EFCore.Extensions.Doc refrence H.EFCore.Extensions
       - name: Restore Dependencies
-        run: dotnet restore
+        run: dotnet restore H.EFCore.Extensions.Doc/
 
-      - name: Download latest DocFX
-        uses: robinraju/release-downloader@v1.4
-        with:
-          repository: "dotnet/docfx"
-          latest: true
-          fileName: "docfx.zip"
-          out-file-path: "_docfx"
-
-      - name: Unzip DocFX
-        run: unzip -j _docfx/docfx.zip -d _docfx
-
-      - name: Build Docfx Documentation
-        run: mono _docfx/docfx.exe H.EFCore.Extensions.Doc/docfx.json
+      - name: Build Doc
+        run: dotnet build H.EFCore.Extensions.Doc/ --configuration Release --no-restore
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
