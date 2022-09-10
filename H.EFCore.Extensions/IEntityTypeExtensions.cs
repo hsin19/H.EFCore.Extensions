@@ -13,13 +13,15 @@ public static class IEntityTypeExtensions
     /// <summary>
     /// Get the <see cref="PropertyInfo"/>s of <see cref="IEntityType"/> which can identify uniqueness
     /// </summary>
+    /// <param name="entityType">The entity type</param>
+    /// <returns>A list of unique fields.</returns>
     /// <remarks>
     /// Identify uniqueness rank:
-    /// <list type="number">
-    /// <item> Primary Key</item>
-    /// <item> Alternate Key with fewest properties</item>
-    /// <item> All Columns</item>
-    /// </list>
+    ///     <list type="number">
+    ///         <item><description>Primary Key</description></item>
+    ///         <item><description>Alternate Key with fewest properties</description></item>
+    ///         <item><description>All Columns</description></item>
+    ///     </list>
     /// </remarks>
     public static List<PropertyInfo> GetUniquePropertyInfo(this IEntityType entityType)
     {

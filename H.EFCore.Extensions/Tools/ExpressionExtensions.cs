@@ -11,6 +11,9 @@ public static class ExpressionExtensions
     /// <summary>
     /// Get Condition Expression
     /// </summary>
+    /// <param name="parameter">The compared object</param>
+    /// <param name="obj">The comparison object</param>
+    /// <param name="keys">Compare property sets</param>
     /// <returns> <c><paramref name="parameter"/>.key1 == <paramref name="obj"/>.key1 And <paramref name="parameter"/>.key2 == ... </c> </returns>
     public static Expression? GetEqualCondition(this ParameterExpression parameter, object? obj, IEnumerable<PropertyInfo> keys)
     {
@@ -32,6 +35,7 @@ public static class ExpressionExtensions
     /// <summary>
     /// Creates a <see cref="MemberExpression"/> by the complex property name.
     /// </summary>
+    /// <param name="name">Complex property name</param>
     /// <inheritdoc cref="Expression.Property(Expression, string)"/>
     public static MemberExpression? GetComplexProperty(this Expression expression, string name)
     {
@@ -68,6 +72,7 @@ public static class ExpressionExtensions
     /// <summary>
     /// Use or( <see langword="||"/> ) connect all conditions
     /// </summary>
+    /// <param name="conditions">Condition set</param>
     /// <inheritdoc cref="Expression.OrElse(Expression, Expression)"/>
     public static Expression OrElse(params Expression[] conditions)
     {

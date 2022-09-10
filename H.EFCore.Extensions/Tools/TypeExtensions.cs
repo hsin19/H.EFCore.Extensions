@@ -9,10 +9,10 @@ namespace H.EFCore.Extensions.Tools;
 public static class TypeExtensions
 {
     /// <summary>
-    /// 
+    /// Gets a value indicating whether the current type is an anonymous type.
     /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
+    /// <param name="type">current type</param>
+    /// <returns>true if the current type is an anonymous type; otherwise, false.</returns>
     public static bool IsAnonymousType(this Type type)
     {
         return type.IsGenericType
@@ -21,13 +21,11 @@ public static class TypeExtensions
     }
 
     /// <summary>
-    /// Searches for the public property with the specified complex name. AnonymousType can omit the property name.
-    /// <para>
-    /// "User.UserId" will return {User, UserId}, same result for "UserId" if <paramref name="type"/> is anonymous.
-    /// </para>
+    /// Searches for the public property with the specified complex name.
+    /// Anonymous Type can omit the property name.
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="name"></param>
+    /// <param name="type">The type that contains the property.</param>
+    /// <param name="name">Complex property name</param>
     /// <returns>
     /// An List for property chain, if found; otherwise, null.
     /// </returns>

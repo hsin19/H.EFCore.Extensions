@@ -14,76 +14,76 @@ public static class DbContextQueryExtensions
     /// <summary>
     /// Query Entity Instance to <see cref="IQueryable{T}"/>
     /// </summary>
-    /// <typeparam name="T">Entity Type</typeparam>
-    /// <param name="context"></param>
+    /// <typeparam name="TEntity">Entity Type</typeparam>
+    /// <param name="context">The context instance that Includ <see cref="DbSet{TEntity}"/></param>
     /// <param name="instance">Entity Instance</param>
-    /// <returns></returns>
+    /// <returns>A set for <paramref name="instance"/>.</returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public static IQueryable<T> Query<T>(this DbContext context, T instance)
-        where T : class
+    public static IQueryable<TEntity> Query<TEntity>(this DbContext context, TEntity instance)
+        where TEntity : class
     {
-        return context.QueryObject<T>(instance);
+        return context.QueryObject<TEntity>(instance);
     }
 
-    /// <remarks>Make sure <paramref name="instance"/> has the properties with same name and assignable type as keys of <typeparamref name="T"/></remarks>
-    /// <inheritdoc cref="Query{T}(DbContext, T)"/>
-    public static IQueryable<T> QueryObject<T>(this DbContext context, object instance)
-        where T : class
+    /// <remarks>Make sure <paramref name="instance"/> has the properties with same name and assignable type as keys of <typeparamref name="TEntity"/></remarks>
+    /// <inheritdoc cref="Query{TEntity}(DbContext, TEntity)"/>
+    public static IQueryable<TEntity> QueryObject<TEntity>(this DbContext context, object instance)
+        where TEntity : class
     {
-        var eType = context.Model.FindEntityType(typeof(T))
-            ?? throw new InvalidOperationException(CoreStrings.InvalidSetType(nameof(T)));
+        var eType = context.Model.FindEntityType(typeof(TEntity))
+            ?? throw new InvalidOperationException(CoreStrings.InvalidSetType(nameof(TEntity)));
         var keys = eType.GetUniquePropertyInfo();
-        var parameter = Expression.Parameter(typeof(T));
+        var parameter = Expression.Parameter(typeof(TEntity));
         var body = parameter.GetEqualCondition(instance, keys);
-        var lambda = Expression.Lambda<Func<T, bool>>(body!, parameter);
-        return context.Set<T>().Where(lambda);
+        var lambda = Expression.Lambda<Func<TEntity, bool>>(body!, parameter);
+        return context.Set<TEntity>().Where(lambda);
     }
 
-    /// <inheritdoc cref="QueryMultiple{T}(DbContext, IEnumerable{T})"/>
-    public static IQueryable<T> Query<T>(this DbContext context, IEnumerable<T> set)
-        where T : class
+    /// <inheritdoc cref="QueryMultiple{TEntity}(DbContext, IEnumerable{TEntity})"/>
+    public static IQueryable<TEntity> Query<TEntity>(this DbContext context, IEnumerable<TEntity> instances)
+        where TEntity : class
     {
-        return context.QueryMultiple(set);
+        return context.QueryMultiple(instances);
     }
 
     /// <summary>
-    /// Query Entity Set to <see cref="IQueryable{T}"/>
+    /// Query Entity Instance collection Set to <see cref="IQueryable{TEntity}"/>
     /// </summary>
-    /// <typeparam name="T">Entity Type</typeparam>
-    /// <param name="context"></param>
-    /// <param name="set">Entity Set</param>
-    /// <returns></returns>
+    /// <typeparam name="TEntity">Entity Type</typeparam>
+    /// <param name="context">The context instance that Includ <see cref="DbSet{TEntity}"/></param>
+    /// <param name="instances">Entity Instance collection</param>
+    /// <returns>A set for <paramref name="instances"/>.</returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public static IQueryable<T> QueryMultiple<T>(this DbContext context, IEnumerable<T> set)
-        where T : class
+    public static IQueryable<TEntity> QueryMultiple<TEntity>(this DbContext context, IEnumerable<TEntity> instances)
+        where TEntity : class
     {
-        return context.QueryObjects<T>(set);
+        return context.QueryObjects<TEntity>(instances);
     }
 
-    /// <remarks>Make sure all of <paramref name="set"/> have the properties with same name and assignable type as keys of <typeparamref name="T"/></remarks>
-    /// <inheritdoc cref="QueryMultiple{T}(DbContext, IEnumerable{T})"/>
-    public static IQueryable<T> QueryObjects<T>(this DbContext context, IEnumerable<object> set)
-       where T : class
+    /// <remarks>Make sure all of <paramref name="instances"/> have the properties with same name and assignable type as keys of <typeparamref name="TEntity"/></remarks>
+    /// <inheritdoc cref="QueryMultiple{TEntity}(DbContext, IEnumerable{TEntity})"/>
+    public static IQueryable<TEntity> QueryObjects<TEntity>(this DbContext context, IEnumerable<object> instances)
+       where TEntity : class
     {
-        var eType = context.Model.FindEntityType(typeof(T))
-            ?? throw new InvalidOperationException(CoreStrings.InvalidSetType(nameof(T)));
+        var eType = context.Model.FindEntityType(typeof(TEntity))
+            ?? throw new InvalidOperationException(CoreStrings.InvalidSetType(nameof(TEntity)));
 
-        if (!set.Any())
+        if (!instances.Any())
         {
-            return context.Set<T>().Where(e => false);
+            return context.Set<TEntity>().Where(e => false);
         }
 
         var keys = eType.GetUniquePropertyInfo();
 
-        if (keys.Count == 1 && set is IEnumerable<T> sameTypeSet)
+        if (keys.Count == 1 && instances is IEnumerable<TEntity> sameTypeSet)
         {
             var lamba = QueryMultipleWithSigleKey(sameTypeSet, keys[0]);
-            return context.Set<T>().Where(lamba);
+            return context.Set<TEntity>().Where(lamba);
         }
         else
         {
-            var lamba = QueryMultipleWithKeys<T>(set, keys);
-            return context.Set<T>().Where(lamba);
+            var lamba = QueryMultipleWithKeys<TEntity>(instances, keys);
+            return context.Set<TEntity>().Where(lamba);
         }
     }
 
