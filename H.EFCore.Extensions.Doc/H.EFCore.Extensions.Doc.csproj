@@ -16,5 +16,5 @@
   <ItemGroup>
     <ProjectReference Include="..\H.EFCore.Extensions\H.EFCore.Extensions.csproj" />
   </ItemGroup>
-
+  
 </Project>

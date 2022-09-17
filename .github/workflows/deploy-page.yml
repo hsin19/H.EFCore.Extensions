@@ -25,9 +25,12 @@ jobs:
       - name: Checkout wiki
         uses: actions/checkout@v3
         with:
-          repository: ${{github.repository}}.wiki    # specify the wiki repo name here.
-          path: H.EFCore.Extensions.Doc/articles/
-          
+          repository: ${{github.repository}}.wiki
+          path: H.EFCore.Extensions.Doc/_wiki/
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+
       - name: Setup Pages
         uses: actions/configure-pages@v2
 
@@ -35,8 +38,19 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.0.x
-        
-        # H.EFCore.Extensions.Doc refrence H.EFCore.Extensions
+
+      - name: Generate Index
+        run: cp README.md H.EFCore.Extensions.Doc/index.md
+
+      - name: Transform wiki
+        run: |
+             node H.EFCore.Extensions.Doc/wiki/wiki.js
+             rm -rf H.EFCore.Extensions.Doc/wiki
+             mv H.EFCore.Extensions.Doc/_wiki H.EFCore.Extensions.Doc/wiki
+             
+        env:
+          WIKI_FOLDER_PATH: H.EFCore.Extensions.Doc/_wiki/
+          
       - name: Restore Dependencies
         run: dotnet restore H.EFCore.Extensions.Doc/
 

@@ -37,7 +37,7 @@
         ]
       }
     ],
-    "overwrite": [ "overwrite/**.md", "overwrite/**.yml" ],
+    "overwrite": [ "apispec/**.md", "apispec/**.yml" ],
     "xrefService": [
       "https://xref.docs.microsoft.com/query?uid={uid}"
     ],
@@ -47,10 +47,7 @@
       "_appTitle": "Documentation",
       "_enableSearch": true,
       "_enableNewTab": false,
-      "_gitContribute": {
-        "repo": "https://github.com/hsin19/H.EFCore.Extensions"
-      },
-      "_gitUrlPattern": "github"
+      "_disableContribution": "true"
     },
     "fileMetadataFiles": [],
     "template": [
@@ -58,9 +55,12 @@
     ],
     "postProcessors": [],
     "markdownEngineName": "markdig",
-    "noLangKeyword": false,
-    "keepFileLink": false,
-    "cleanupCacheHistory": true,
-    "disableGitFeatures": false
+    "markdownEngineProperties": {
+      "markdigExtensions": [
+        "common",
+        "diagrams",
+        "footnotes"
+      ]
+    }
   }
 }
