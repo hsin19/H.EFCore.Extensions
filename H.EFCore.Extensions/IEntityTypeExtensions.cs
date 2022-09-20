@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace H.EFCore.Extensions;
 
@@ -8,12 +9,11 @@ namespace H.EFCore.Extensions;
 /// </summary>
 public static class IEntityTypeExtensions
 {
-    private static readonly Dictionary<IEntityType, List<PropertyInfo>> s_cacheKey = new();
-
     /// <summary>
     /// Get the <see cref="PropertyInfo"/>s of <see cref="IEntityType"/> which can identify uniqueness
     /// </summary>
     /// <param name="entityType">The entity type</param>
+    /// <param name="cache">Memory Cache</param>
     /// <returns>A list of unique fields.</returns>
     /// <remarks>
     /// Identify uniqueness rank:
@@ -23,22 +23,28 @@ public static class IEntityTypeExtensions
     ///         <item><description>All Columns</description></item>
     ///     </list>
     /// </remarks>
+    public static List<PropertyInfo> GetUniquePropertyInfo(this IEntityType entityType, IMemoryCache? cache)
+    {
+        if (cache == null)
+        {
+            return GetUniquePropertyInfo(entityType);
+        }
+        var properties = cache.GetOrCreate(
+            (typeof(IEntityTypeExtensions), entityType),
+            (entry) =>
+            {
+                entry.SetSize(10);
+                return GetUniquePropertyInfo(entityType);
+            });
+        return properties;
+    }
+
+    /// <inheritdoc cref="GetUniquePropertyInfo(IEntityType, IMemoryCache)"/>
     public static List<PropertyInfo> GetUniquePropertyInfo(this IEntityType entityType)
     {
-        if (!s_cacheKey.TryGetValue(entityType, out var properties))
-        {
-            var keys = entityType.GetKeys();
-            var key = keys.FirstOrDefault(k => k.IsPrimaryKey());
-            key ??= keys.MinBy(e => e.Properties.Count);
-            properties = key?.Properties
-                .Select(k => k.PropertyInfo)
-                .OfType<PropertyInfo>()
-                .ToList();
-            properties ??= entityType.GetProperties()
-                .Select(p => p.PropertyInfo).OfType<PropertyInfo>()
-                .ToList();
-            s_cacheKey[entityType] = properties;
-        }
-        return properties;
+        var key = entityType.FindPrimaryKey();
+        key ??= entityType.GetKeys().MinBy(e => e.Properties.Count);
+        var properties = key?.Properties ?? entityType.GetProperties();
+        return properties.Select(p => p.PropertyInfo).OfType<PropertyInfo>().ToList();
     }
 }

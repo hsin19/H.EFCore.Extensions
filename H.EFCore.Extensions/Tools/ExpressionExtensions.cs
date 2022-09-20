@@ -68,26 +68,25 @@ public static class ExpressionExtensions
         return left is null || right is null ? left ?? right : Expression.OrElse(left, right);
     }
 
-
     /// <summary>
     /// Use or( <see langword="||"/> ) connect all conditions
     /// </summary>
     /// <param name="conditions">Condition set</param>
     /// <inheritdoc cref="Expression.OrElse(Expression, Expression)"/>
-    public static Expression OrElse(params Expression[] conditions)
+    public static Expression OrElse(this IEnumerable<Expression> conditions)
     {
-        switch (conditions.Length)
+        switch (conditions.Count())
         {
             case 0:
-                throw new ArgumentException("Array cannot be empty.", nameof(conditions));
+                return Expression.Constant(true);
             case 1:
-                return conditions[0];
+                return conditions.First();
             case 2:
-                return Expression.OrElse(conditions[0], conditions[1]);
+                return Expression.OrElse(conditions.First(), conditions.Last());
             default:
             {
-                var spiltIndex = conditions.Length / 2;
-                return Expression.OrElse(OrElse(conditions[..spiltIndex]), OrElse(conditions[spiltIndex..]));
+                var spiltIndex = conditions.Count() / 2;
+                return Expression.OrElse(OrElse(conditions.Take(spiltIndex)), OrElse(conditions.Skip(spiltIndex)));
             }
         }
     }

@@ -9,7 +9,7 @@
     <Authors>Hsin19</Authors>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;Extensions</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>6.0.2</Version>
+    <Version>6.0.3</Version>
     <PackageProjectUrl>https://github.com/hsin19/H.EFCore.Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hsin19/H.EFCore.Extensions</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>

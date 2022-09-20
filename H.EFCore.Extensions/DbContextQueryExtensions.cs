@@ -3,6 +3,8 @@ using System.Reflection;
 using H.EFCore.Extensions.Tools;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace H.EFCore.Extensions;
 
@@ -32,7 +34,8 @@ public static class DbContextQueryExtensions
     {
         var eType = context.Model.FindEntityType(typeof(TEntity))
             ?? throw new InvalidOperationException(CoreStrings.InvalidSetType(nameof(TEntity)));
-        var keys = eType.GetUniquePropertyInfo();
+        var cache = context.GetService<IMemoryCache>();
+        var keys = eType.GetUniquePropertyInfo(cache);
         var parameter = Expression.Parameter(typeof(TEntity));
         var body = parameter.GetEqualCondition(instance, keys);
         var lambda = Expression.Lambda<Func<TEntity, bool>>(body!, parameter);
@@ -72,8 +75,8 @@ public static class DbContextQueryExtensions
         {
             return context.Set<TEntity>().Where(e => false);
         }
-
-        var keys = eType.GetUniquePropertyInfo();
+        var cache = context.GetService<IMemoryCache>();
+        var keys = eType.GetUniquePropertyInfo(cache);
 
         if (keys.Count == 1 && instances is IEnumerable<TEntity> sameTypeSet)
         {
@@ -116,7 +119,7 @@ public static class DbContextQueryExtensions
             .Select(o => parameter.GetEqualCondition(o, keys))
             .OfType<Expression>()
             .ToList();
-        var body = ExpressionExtensions.OrElse(condutions.ToArray());
+        var body = condutions.OrElse();
         return Expression.Lambda<Func<T, bool>>(body!, parameter);
     }
 }
