@@ -1,10 +1,15 @@
 ﻿using H.EFCore.Extensions.Test.TestModel;
 using H.EFCore.Extensions.Tools;
+using Xunit.Abstractions;
 
 namespace H.EFCore.Extensions.Test;
 
 public class DbContextQueryExtensions_Test : BloggingTestBase
 {
+    public DbContextQueryExtensions_Test(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
+    {
+    }
+
     [Fact]
     public void Dbcontext_Query()
     {
@@ -76,5 +81,28 @@ public class DbContextQueryExtensions_Test : BloggingTestBase
         var c = context.Set<Comment>().OrderBy("PostId").OrderBy("User.UserId").ThenBy("PostId").ToQueryString();
         var d = context.Set<Comment>().OrderThenBy("PostId").OrderThenByDescending("User.UserId").OrderThenBy("Index").ToQueryString();
         var f = context.Set<Comment>().OrderBy("PostId,User.UserId Desc, Index ").ToQueryString();
+    }
+
+    [Fact]
+    public void Replace_t()
+    {
+        var comments = Enumerable.Range(1, 100).Select(e => new User { UserId = e, Name = e.ToString() }).ToList();
+        using (var context = CreateContext())
+        {
+            context.AddRange(comments.Take(50));
+            context.AddRange(comments.Take(50));
+            //comments = comments.Select(e => new User { UserId = e.UserId, Name = "Change" }).ToList();
+            context.Replace(comments);
+            context.SaveChanges();
+        }
+
+        using (var context = CreateContext())
+        {
+            comments = comments.Select(e => new User { UserId = e.UserId, Name = "Change" }).ToList();
+            context.Replace(comments);
+
+            context.SaveChanges();
+        }
+
     }
 }

@@ -18,35 +18,28 @@ public static class DbContextQueryExtensions
     /// </summary>
     /// <typeparam name="TEntity">Entity Type</typeparam>
     /// <param name="context">The context instance that Includ <see cref="DbSet{TEntity}"/></param>
-    /// <param name="instance">Entity Instance</param>
-    /// <returns>A set for <paramref name="instance"/>.</returns>
+    /// <param name="entity">Entity Instance</param>
+    /// <returns>A set for <paramref name="entity"/>.</returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public static IQueryable<TEntity> Query<TEntity>(this DbContext context, TEntity instance)
+    public static IQueryable<TEntity> Query<TEntity>(this DbContext context, TEntity entity)
         where TEntity : class
     {
-        return context.QueryObject<TEntity>(instance);
+        return context.QueryObject<TEntity>(entity);
     }
 
-    /// <remarks>Make sure <paramref name="instance"/> has the properties with same name and assignable type as keys of <typeparamref name="TEntity"/></remarks>
+    /// <remarks>Make sure <paramref name="entity"/> has the properties with same name and assignable type as keys of <typeparamref name="TEntity"/></remarks>
     /// <inheritdoc cref="Query{TEntity}(DbContext, TEntity)"/>
-    public static IQueryable<TEntity> QueryObject<TEntity>(this DbContext context, object instance)
+    public static IQueryable<TEntity> QueryObject<TEntity>(this DbContext context, object entity)
         where TEntity : class
     {
-        var eType = context.Model.FindEntityType(typeof(TEntity))
-            ?? throw new InvalidOperationException(CoreStrings.InvalidSetType(nameof(TEntity)));
-        var cache = context.GetService<IMemoryCache>();
-        var keys = eType.GetUniquePropertyInfo(cache);
-        var parameter = Expression.Parameter(typeof(TEntity));
-        var body = parameter.GetEqualCondition(instance, keys);
-        var lambda = Expression.Lambda<Func<TEntity, bool>>(body!, parameter);
-        return context.Set<TEntity>().Where(lambda);
+        return context.Set<TEntity>().Where(context.GetPredicate<TEntity>(new object[] { entity }));
     }
 
     /// <inheritdoc cref="QueryMultiple{TEntity}(DbContext, IEnumerable{TEntity})"/>
-    public static IQueryable<TEntity> Query<TEntity>(this DbContext context, IEnumerable<TEntity> instances)
+    public static IQueryable<TEntity> Query<TEntity>(this DbContext context, IEnumerable<TEntity> entities)
         where TEntity : class
     {
-        return context.QueryMultiple(instances);
+        return context.QueryMultiple(entities);
     }
 
     /// <summary>
@@ -54,52 +47,62 @@ public static class DbContextQueryExtensions
     /// </summary>
     /// <typeparam name="TEntity">Entity Type</typeparam>
     /// <param name="context">The context instance that Includ <see cref="DbSet{TEntity}"/></param>
-    /// <param name="instances">Entity Instance collection</param>
-    /// <returns>A set for <paramref name="instances"/>.</returns>
+    /// <param name="entities">Entity Instance collection</param>
+    /// <returns>A set for <paramref name="entities"/>.</returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public static IQueryable<TEntity> QueryMultiple<TEntity>(this DbContext context, IEnumerable<TEntity> instances)
+    public static IQueryable<TEntity> QueryMultiple<TEntity>(this DbContext context, IEnumerable<TEntity> entities)
         where TEntity : class
     {
-        return context.QueryObjects<TEntity>(instances);
+        return context.QueryObjects<TEntity>(entities);
     }
 
-    /// <remarks>Make sure all of <paramref name="instances"/> have the properties with same name and assignable type as keys of <typeparamref name="TEntity"/></remarks>
+    /// <remarks>Make sure all of <paramref name="entities"/> have the properties with same name and assignable type as keys of <typeparamref name="TEntity"/></remarks>
     /// <inheritdoc cref="QueryMultiple{TEntity}(DbContext, IEnumerable{TEntity})"/>
-    public static IQueryable<TEntity> QueryObjects<TEntity>(this DbContext context, IEnumerable<object> instances)
+    public static IQueryable<TEntity> QueryObjects<TEntity>(this DbContext context, IEnumerable<object> entities)
        where TEntity : class
     {
+        return context.Set<TEntity>().Where(context.GetPredicate<TEntity>(entities));
+    }
+
+    internal static Expression<Func<TEntity, bool>> GetPredicate<TEntity>(this DbContext context, IEnumerable<object> entities)
+        where TEntity : class
+    {
+        if (!entities.Any())
+        {
+            return e => false;
+        }
         var eType = context.Model.FindEntityType(typeof(TEntity))
             ?? throw new InvalidOperationException(CoreStrings.InvalidSetType(nameof(TEntity)));
-
-        if (!instances.Any())
-        {
-            return context.Set<TEntity>().Where(e => false);
-        }
         var cache = context.GetService<IMemoryCache>();
         var keys = eType.GetUniquePropertyInfo(cache);
 
-        if (keys.Count == 1 && instances is IEnumerable<TEntity> sameTypeSet)
+        if (entities.Count() == 1)
         {
-            var lamba = QueryMultipleWithSigleKey(sameTypeSet, keys[0]);
-            return context.Set<TEntity>().Where(lamba);
+            var parameter = Expression.Parameter(typeof(TEntity));
+            var body = parameter.GetEqualCondition(entities.First(), keys);
+            var lambda = Expression.Lambda<Func<TEntity, bool>>(body!, parameter);
+            return lambda;
+        }
+        else if (keys.Count == 1 && entities is IEnumerable<TEntity> sameTypeSet)
+        {
+            return QueryMultipleWithSigleKey(sameTypeSet, keys[0]);
         }
         else
         {
-            var lamba = QueryMultipleWithKeys<TEntity>(instances, keys);
-            return context.Set<TEntity>().Where(lamba);
+            return QueryMultipleWithKeys<TEntity>(entities, keys);
         }
     }
 
-    private static Expression<Func<T, bool>> QueryMultipleWithSigleKey<T>(IEnumerable<T> objs, PropertyInfo key)
+    private static Expression<Func<TEntity, bool>> QueryMultipleWithSigleKey<TEntity>(IEnumerable<TEntity> entities, PropertyInfo key)
     {
         // t => entities.Select(e => e.[key]).Contains(t.[key])
-        var parameter_t = Expression.Parameter(typeof(T));
-        var entitiesConst = Expression.Constant(objs);
-        var parameter_e = Expression.Parameter(typeof(T));
+        var parameter_t = Expression.Parameter(typeof(TEntity));
+        var entitiesConst = Expression.Constant(entities);
+        var parameter_e = Expression.Parameter(typeof(TEntity));
         var entitiesSelect = Expression.Call(
              typeof(Enumerable),
              nameof(Enumerable.Select),
-             new[] { typeof(T), key.PropertyType },
+             new[] { typeof(TEntity), key.PropertyType },
              entitiesConst,
              Expression.Lambda(Expression.Property(parameter_e, key), parameter_e));
         var entitiesContains = Expression.Call(
@@ -108,18 +111,38 @@ public static class DbContextQueryExtensions
              new[] { key.PropertyType },
              entitiesSelect,
              Expression.Property(parameter_t, key));
-        return Expression.Lambda<Func<T, bool>>(entitiesContains, parameter_t);
+        return Expression.Lambda<Func<TEntity, bool>>(entitiesContains, parameter_t);
     }
 
-    private static Expression<Func<T, bool>> QueryMultipleWithKeys<T>(IEnumerable<object> objs, IEnumerable<PropertyInfo> keys)
+    private static Expression<Func<TEntity, bool>> QueryMultipleWithKeys<TEntity>(IEnumerable<object> entities, IEnumerable<PropertyInfo> keys)
     {
         // t => (t.[key1] == [key1] && t.[key2] == [key2]) || (t.[key1] == [key1] && t.[key2] == [key2])
-        var parameter = Expression.Parameter(typeof(T));
-        var condutions = objs
+        var parameter = Expression.Parameter(typeof(TEntity));
+        var condutions = entities
             .Select(o => parameter.GetEqualCondition(o, keys))
-            .OfType<Expression>()
-            .ToList();
+            .OfType<Expression>();
         var body = condutions.OrElse();
-        return Expression.Lambda<Func<T, bool>>(body!, parameter);
+        return Expression.Lambda<Func<TEntity, bool>>(body!, parameter);
+    }
+
+    /// <summary>
+    ///     <para>
+    ///     Begins tracking the given entities and entries reachable from the given entities using the <see cref="EntityState.Modified" /> state if the entity exists in the database, otherwise using the <see cref="EntityState.Added" /> state.
+    ///     </para>
+    ///     <para>
+    ///         This method will query the database to determine whether to Added or Modified, but no data manipulation will be performed until <see cref="DbContext.SaveChanges()" /> is called.
+    ///     </para>
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <param name="context"></param>
+    /// <param name="entities"></param>
+    public static void Replace<TEntity>(this DbContext context, IEnumerable<TEntity> entities)
+        where TEntity : class
+    {
+        var existData = context.Query(entities).AsNoTracking().ToList();
+        var predicate = context.GetPredicate<TEntity>(existData);
+        var loockup = entities.ToLookup(predicate.Compile());
+        context.AddRange(loockup[false]);
+        context.UpdateRange(loockup[true]);
     }
 }

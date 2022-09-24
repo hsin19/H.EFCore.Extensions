@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Data.Common;
-
+using Xunit.Abstractions;
 
 namespace H.EFCore.Extensions.Test;
 
@@ -8,19 +9,25 @@ public class BloggingTestBase : IDisposable
 {
     private readonly DbConnection _connection;
     private readonly DbContextOptions<BloggingContext> _contextOptions;
+    private readonly ITestOutputHelper _testOutputHelper;
 
     protected BloggingContext CreateContext()
     {
         return new(_contextOptions);
     }
 
-    public BloggingTestBase()
+    public BloggingTestBase(ITestOutputHelper testOutputHelper)
     {
+        _testOutputHelper = testOutputHelper;
         _connection = new SqliteConnection("Filename=:memory:");
         _connection.Open();
 
         _contextOptions = new DbContextOptionsBuilder<BloggingContext>()
             .UseSqlite(_connection)
+#if DEBUG
+            .LogTo(_testOutputHelper.WriteLine, new[] { RelationalEventId.CommandExecuting })
+            .EnableSensitiveDataLogging()
+#endif
             .Options;
 
         // Create the schema and seed some data
